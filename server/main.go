@@ -1,45 +1,50 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
-var text = "TCCHAT_REGISTER\tBasile\n"
-var clients = make(map[string]Client)
-
-// Definition du client
-type Client struct {
-	nickname string
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
 }
 
-// Fonction permettant de connecter un client au chat.
-func createClient(nick string) {
-	clients[nick] = Client{nick}
+func register(nom string) {
+	fmt.Println(nom + " a rejoint le chat!")
 }
 
-// Fonction permettant de déconnecter le client du chat.
-func (c Client) disconnect() {
-	delete(clients, c.nickname)
+func envoyerMessage(Message_Payload string) {
+	fmt.Println("...USER... dit: " + Message_Payload)
 }
 
-func analysemessage(text string) {
-	line := strings.Split(text, "\n")
-	for i := 0; i < len(line); i++ {
-		message := strings.Split(line[i], "\t")
-		switch message[0] {
-		case "TCChat_REGISTER":
+func deconnecter() {
+	fmt.Println("...USER... s'est déconnecté")
+}
 
-		}
+func analyseMessage(text string) {
+	message := strings.Split(text, "\t")
+	message[1] = strings.TrimRight(message[1], "\r\n")
+	switch message[0] {
+	case "TCCHAT_REGISTER":
+		register(message[1])
+	case "TCCHAT_MESSAGE":
+		envoyerMessage(message[1])
+	case "TCCHAT_DISCONNECT":
+		deconnecter()
 	}
 }
 
 func main() {
+	f, err := os.Open("bonjour.txt")
+	check(err)
+	text, err := bufio.NewReader(f).ReadString('\n')
+	check(err)
+	fmt.Println(text)
+	//fmt.Println("TCCHAT_REGISTER\tgautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n")
+	analyseMessage(text)
 
-	message := strings.Split(text, "\t")
-	client1 := Client{nickname: message[1]}
-	fmt.Println(client1)
-
-	if message[0] == "TCCHAT_REGISTER" {
-	}
 }
