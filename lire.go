@@ -1,12 +1,10 @@
 package main
 
 import (
-
 	"fmt"
 	"strings"
 
 	"io/ioutil"
-
 )
 
 func check(e error) {
@@ -34,9 +32,5 @@ func main() {
 	fmt.Print(string(dat))
 	var text = string(dat)
 	analyseMessage(text)
-
-
-
-
 
 }
