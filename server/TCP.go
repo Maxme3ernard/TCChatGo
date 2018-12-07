@@ -7,9 +7,10 @@ import (
 )
 
 func handleConnection(c net.Conn) {
-	text, _ := bufio.NewReader(c).ReadString('\n')
-	fmt.Println(text)
-	c.Write([]byte(text))
+	conn, _ := bufio.NewReader(c).ReadString('\n')
+	fmt.Println(conn)
+	conn = "Yes et toi baby?" + "\n"
+	c.Write([]byte(conn))
 }
 func main() {
 	ln, err := net.Listen("tcp", ":12345")

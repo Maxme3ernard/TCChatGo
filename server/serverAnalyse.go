@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"net"
 	"strings"
 )
 
@@ -45,13 +45,30 @@ func analyseMessage(text string) {
 	}
 }
 
-func main() {
-	f, err := os.Open("bonjour.txt")
-	check(err)
-	reader := bufio.NewReader(f)
+func handleConnection(c net.Conn) {
+	reader := bufio.NewReader(c)
 	for k := 0; k < 10; k++ {
 		message, err := reader.ReadString('\n')
 		check(err)
 		analyseMessage(message)
 	}
+	//c.Write([]byte(conn))
+}
+
+func main() {
+	ln, err := net.Listen("tcp", ":12345")
+	fmt.Println(ln)
+	if err != nil {
+		// handle error
+	}
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			// handle error
+		}
+		go handleConnection(conn)
+	}
+
+	/*f, err := os.Open("bonjour.txt")
+	check(err)*/
 }
