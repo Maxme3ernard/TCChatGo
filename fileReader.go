@@ -1,18 +1,14 @@
 package main
 
 import (
-
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
-
-	"io/ioutil"
-
 )
 
 func check(e error) {
-	if e != nil {
-		panic(e)
-	}
+	//todo
 }
 
 func analyseMessage(text string) {
@@ -29,14 +25,11 @@ func analyseMessage(text string) {
 }
 
 func main() {
-	dat, err := ioutil.ReadFile("bonjour.txt")
+	f, err := os.Open("bonjour.txt")
 	check(err)
-	fmt.Print(string(dat))
-	var text = string(dat)
+	text, _ := bufio.NewReader(f).ReadString('\n')
+	fmt.Println(text)
+	//fmt.Println("TCCHAT_REGISTER\tgautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n")
 	analyseMessage(text)
-
-
-
-
 
 }
