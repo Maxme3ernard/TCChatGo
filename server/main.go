@@ -32,6 +32,13 @@ func analyseMessage(text string) {
 	case "TCCHAT_REGISTER":
 		register(message[1])
 	case "TCCHAT_MESSAGE":
+		if len(message) > 2 {
+			for i := 2; i < len(message); i++ {
+				message[1] += "\t" + message[i]
+			}
+			message[1] = strings.TrimRight(message[1], "\r\t")
+		}
+
 		envoyerMessage(message[1])
 	case "TCCHAT_DISCONNECT":
 		deconnecter()
@@ -41,10 +48,10 @@ func analyseMessage(text string) {
 func main() {
 	f, err := os.Open("bonjour.txt")
 	check(err)
-	text, err := bufio.NewReader(f).ReadString('\n')
-	check(err)
-	fmt.Println(text)
-	//fmt.Println("TCCHAT_REGISTER\tgautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n")
-	analyseMessage(text)
-
+	reader := bufio.NewReader(f)
+	for k := 0; k < 10; k++ {
+		message, err := reader.ReadString('\n')
+		check(err)
+		analyseMessage(message)
+	}
 }
