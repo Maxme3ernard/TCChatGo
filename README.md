@@ -14,7 +14,7 @@ A faire:
 
 
 
-##Project Planning :
+## Project Planning :
 ### Rush 2 :
 * [ ] Create TC chat server application 
 * [ ] Client Application
