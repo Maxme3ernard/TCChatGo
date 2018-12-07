@@ -9,6 +9,7 @@ import (
 func handleConnection(c net.Conn) {
 	text, _ := bufio.NewReader(c).ReadString('\n')
 	fmt.Println(text)
+	c.Write([]byte(text))
 }
 func main() {
 	ln, err := net.Listen("tcp", ":12345")
