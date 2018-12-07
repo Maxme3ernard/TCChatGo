@@ -64,7 +64,7 @@ func analyseMessage(text string, conn net.Conn) {
 			message[1] = strings.TrimRight(message[1], "\r\t")
 		}
 
-		envoyerMessage(message[1])
+		envoyerMessage(message[1], conn)
 	case "TCCHAT_DISCONNECT":
 		deconnecter(conn)
 	}
