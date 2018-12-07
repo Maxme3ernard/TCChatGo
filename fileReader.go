@@ -8,28 +8,27 @@ import (
 )
 
 func check(e error) {
-	//todo
+	if e != nil {
+		panic(e)
+	}
 }
 
 func analyseMessage(text string) {
-	//text="TCCHAT_REGISTER\tGautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n"
-	line := strings.Split(text, "\n")
-	for i := 0; i < len(line); i++ {
-		message := strings.Split(line[i], "\t")
-		switch message[0] {
-		case "TCCHAT_REGISTER":
-			fmt.Println(message[1] + " a rejoint le chat!")
-
-		}
+	message := strings.Split(text, "\t")
+	message[1] = strings.TrimRight(message[1], "\r\n")
+	switch message[0] {
+	case "TCCHAT_REGISTER":
+		fmt.Println(message[1] + " a rejoint le chat!")
 	}
 }
 
 func main() {
 	f, err := os.Open("bonjour.txt")
 	check(err)
-	text, _ := bufio.NewReader(f).ReadString('\n')
+	text, err := bufio.NewReader(f).ReadString('\n')
+	check(err)
 	fmt.Println(text)
-	fmt.Println("TCCHAT_REGISTER\tgautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n")
-	//analyseMessage(text)
+	//fmt.Println("TCCHAT_REGISTER\tgautier\nTCCHAT_MESSAGE\ttrace ta route mamen\nTCCHAT_REGISTER\tRobin\nTCCHAT_REGISTER\tMaxime\n")
+	analyseMessage(text)
 
 }
