@@ -1,0 +1,4 @@
+TCCHAT_REGISTER Gautier
+TCCHAT_MESSAGE  trace ta route mamen
+TCCHAT_REGISTER Robin
+TCCHAT_REGISTER Maxime
