@@ -8,3 +8,15 @@ A faire:
 * [ ] Gérer les erreurs dans les messages reçus par le serveur.
 * [ ] Réussir à récupérer le nom d'utilisateur lors de la réception d'un message pour l'afficher devant le message lors de l'envoie à tous les clients ("UTILISATEUR DIT: .....")
 * [ ] Gérer le cas ou un même client se register une deuxième fois: terminer la connexion.
+
+
+
+
+
+
+##Project Planning :
+### Rush 2 :
+* [ ] Create TC chat server application 
+* [ ] Client Application
+* [ ] Multiple clients ?
+* [x] Read and write data on TCP socket ? (single client) 
