@@ -8,7 +8,7 @@ import (
 )
 
 var connexions = make(map[net.Conn]string)
-var NOM_SERVEUR = "Chat TC du groupe 3"
+var NomServeur = "Chat TC du groupe 3"
 
 func check(e error) {
 	if e != nil {
@@ -23,36 +23,42 @@ func register(nom string, conn net.Conn) {
 		deconnecter(conn)
 	} else {
 		connexions[conn] = nom
-		conn.Write([]byte("TCCHAT_WELCOME" + "\t" + NOM_SERVEUR + "\n"))
+		_, err := conn.Write([]byte("TCCHAT_WELCOME" + "\t" + NomServeur + "\n"))
+		check(err)
 		for clients := range connexions {
-			clients.Write([]byte("TCCHAT_USERIN" + "\t" + connexions[conn] + "\n"))
+			_, err := clients.Write([]byte("TCCHAT_USERIN" + "\t" + connexions[conn] + "\n"))
+			check(err)
 		}
 		//fmt.Println(connexions[conn] + " a rejoint le chat!")
 	}
 }
 
 //Fonction appelée lorsqu'un client envoie un message sur le chat.
-func envoyerMessage(Message_Payload string, conn net.Conn) {
+func envoyerMessage(MessagePayload string, conn net.Conn) {
+	MessagePayload = strings.TrimRight(MessagePayload, "\r\n")
 	for clients := range connexions {
-		clients.Write([]byte("TCCHAT_BCAST\t" + connexions[conn] + "\t" + Message_Payload + "\n"))
+		_, err := clients.Write([]byte("TCCHAT_BCAST\t" + connexions[conn] + "\t" + MessagePayload + "\n"))
+		check(err)
 	}
-	fmt.Println(connexions[conn] + " dit: " + Message_Payload)
+	fmt.Println(connexions[conn] + " dit: " + MessagePayload)
 }
 
 //Fonction appelée quand un client se déconnecte du chat.
 func deconnecter(conn net.Conn) {
 	for clients := range connexions {
-		clients.Write([]byte("TCCHAT_USEROUT" + "\t" + connexions[conn] + "\n"))
+		_, err := clients.Write([]byte("TCCHAT_USEROUT" + "\t" + connexions[conn] + "\n"))
+		check(err)
 	}
 	delete(connexions, conn)
-	conn.Close()
-	//fmt.Println(connexions[conn] + " s'est déconnecté")
+	err := conn.Close()
+	check(err)
+	fmt.Println(connexions[conn] + " s'est déconnecté")
 }
 
 //Fonction appelée pour décoder le string reçu par le serveur.
 func analyseMessage(text string, conn net.Conn) {
+	text = strings.TrimRight(text, "\r\n")
 	message := strings.Split(text, "\t")
-	message[1] = strings.TrimRight(message[1], "\r\n")
 	switch message[0] {
 	case "TCCHAT_REGISTER":
 		register(message[1], conn)
@@ -73,10 +79,12 @@ func analyseMessage(text string, conn net.Conn) {
 //Fonction appelée lorsqu'un nouveau client cherche à se connecter.
 func handleConnection(conn net.Conn) {
 	reader := bufio.NewReader(conn)
-	for k := 0; k < 10; k++ {
+	for /*k := 0; k < 10; k++*/ {
 		message, err := reader.ReadString('\n')
 		check(err)
-		analyseMessage(message, conn)
+		if message != "" {
+			analyseMessage(message, conn)
+		}
 	}
 	//conn.Write([]byte(message))
 }

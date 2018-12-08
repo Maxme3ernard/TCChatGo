@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"os"
 	"strings"
 )
 
@@ -11,6 +12,17 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+func analyseText(text string, conn net.Conn) {
+	if text == "!stop" {
+		_, err := fmt.Fprintf(conn, "TCCHAT_DISCONNECT"+"\n")
+		check(err)
+	} else {
+		_, err := fmt.Fprintf(conn, "TCCHAT_MESSAGE\t"+text+"\n")
+		check(err)
+	}
+
 }
 
 //Fonction appelée quand l'utilisateur est connecté au chat, qui lui souhaite la bienvenue.
@@ -25,7 +37,7 @@ func userin(userName string) {
 
 //Fonction appelée quand un utilisateur envoie un message, affiche le message.
 func messageReceived(userName string, msg string) {
-	fmt.Println(userName + " dit: " + msg)
+	fmt.Println(userName + ": " + msg)
 }
 
 //Fonction appelée quand un utilisateur se déconnecte, affiche l'information.
@@ -35,8 +47,8 @@ func userout(userName string) {
 
 //Fonction eprmettant de décoder le string reçu en TCP et lancer les instructions correspondantes.
 func analyseMessage(text string) {
+	text = strings.TrimRight(text, "\r\n")
 	message := strings.Split(text, "\t")
-	message[1] = strings.TrimRight(message[1], "\r\n")
 	switch message[0] {
 	case "TCCHAT_WELCOME":
 		welcome(message[1])
@@ -49,7 +61,7 @@ func analyseMessage(text string) {
 			for i := 3; i < len(message); i++ {
 				message[2] += "\t" + message[i]
 			}
-			message[2] = strings.TrimRight(message[1], "\r\t")
+			message[2] = strings.TrimRight(message[2], "\r\t")
 		}
 		messageReceived(message[1], message[2])
 	}
@@ -59,24 +71,39 @@ func analyseMessage(text string) {
 func clientRun(conn net.Conn) {
 	text := ""
 	stop := false
-	reader := bufio.NewReader(conn) //Création du reader chargé de lire les string échangés à travers la connexion
+	readerConsole := bufio.NewReader(os.Stdin)
+	fmt.Println("Quel est votre pseudo?")
+	name, _ := readerConsole.ReadString('\n')
+	_, err := fmt.Fprintf(conn, "TCCHAT_REGISTER\t"+name+"\n")
+	check(err)
 	for !stop {
-		//Lecture de l'entrée par l'utilisateur
+		text, _ = readerConsole.ReadString('\n')
 		if text != "" {
-			analyseText
+			analyseText(text+"\n", conn)
 			text = ""
 		}
-		status, err := reader.ReadString('\n')
-		check(err)
-		analyseMessage(status)
 	}
 
 }
 
-func main() {
-	conn, err := net.Dial("tcp", "10.3.141.1:8080") //Etablissement de la connexion
+func handleConnection(conn net.Conn) {
+	readerConnexion := bufio.NewReader(conn) //Création du reader chargé de lire les string échangés à travers la connexion
+	for {
+		status, err := readerConnexion.ReadString('\n')
+		check(err)
+		analyseMessage(status)
+	}
+}
+
+func setupCon() {
+	conn, err := net.Dial("tcp", "localhost:8080") //Etablissement de la connexion
 	if err != nil {
 		// handle error
 	}
+	go handleConnection(conn)
 	clientRun(conn)
+}
+
+func main() {
+	setupCon()
 }
