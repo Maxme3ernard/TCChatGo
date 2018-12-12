@@ -14,6 +14,7 @@ func check(e error) {
 	}
 }
 
+// Pour se deconnecter l'utilisateur doit entrer : !stop. Cette fonction gere la deconnection
 func analyseText(text string, conn net.Conn) {
 	if strings.TrimRight(text, "\n") == "!stop" {
 		_, err := fmt.Fprintf(conn, "TCCHAT_DISCONNECT"+"\n")
