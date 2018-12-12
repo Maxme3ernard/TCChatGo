@@ -15,12 +15,13 @@ func check(e error) {
 }
 
 func analyseText(text string, conn net.Conn) {
-	if text == "!stop" {
+	if strings.TrimRight(text, "\n") == "!stop" {
 		_, err := fmt.Fprintf(conn, "TCCHAT_DISCONNECT"+"\n")
 		check(err)
 	} else {
 		_, err := fmt.Fprintf(conn, "TCCHAT_MESSAGE\t"+text+"\n")
 		check(err)
+
 	}
 
 }
@@ -78,6 +79,8 @@ func clientRun(conn net.Conn) {
 	check(err)
 	for !stop {
 		text, _ = readerConsole.ReadString('\n')
+		print(text)
+
 		if text != "" {
 			analyseText(text+"\n", conn)
 			text = ""
