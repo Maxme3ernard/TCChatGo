@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"sync"
 )
 
 var connexions = make(map[net.Conn]string)
 var NomServeur = "Chat TC du groupe 3"
+var mux = sync.Mutex{}
 
 func check(e error) {
 	if e != nil {
@@ -67,7 +69,6 @@ func analyseMessage(text string, conn net.Conn) {
 			}
 			message[1] = strings.TrimRight(message[1], "\t")
 		}
-
 		envoyerMessage(message[1], conn)
 	case "TCCHAT_DISCONNECT":
 		deconnecter(conn)
@@ -85,7 +86,9 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 		if message != "" {
+			mux.Lock()
 			analyseMessage(message, conn)
+			mux.Unlock()
 		}
 	}
 }

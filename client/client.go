@@ -9,11 +9,17 @@ import (
 )
 
 var stop = false
+var f, _ = os.Open("log.txt")
+var logs = bufio.NewWriter(f)
 
 func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+func imprimer(text string) {
+	logs.WriteString(text + "\n")
 }
 
 func analyseText(text string, conn net.Conn) {
@@ -31,22 +37,26 @@ func analyseText(text string, conn net.Conn) {
 
 //Fonction appelée quand l'utilisateur est connecté au chat, qui lui souhaite la bienvenue.
 func welcome(serverName string) {
-	fmt.Println("Bienvenue sur " + serverName + ".")
+	imprimer("Bienvenue sur " + serverName + ".")
+	//fmt.Println("Bienvenue sur " + serverName + ".")
 }
 
 //Fonction appelée quand un utilisateur rejoint le chat, affiche l'information.
 func userin(userName string) {
-	fmt.Println(userName + " a rejoint le chat. Bienvenue à lui!")
+	imprimer(userName + " a rejoint le chat. Bienvenue à lui!")
+	//fmt.Println(userName + " a rejoint le chat. Bienvenue à lui!")
 }
 
 //Fonction appelée quand un utilisateur envoie un message, affiche le message.
 func messageReceived(userName string, msg string) {
-	fmt.Println(userName + ": " + msg)
+	imprimer(userName + ": " + msg)
+	//fmt.Println(userName + ": " + msg)
 }
 
 //Fonction appelée quand un utilisateur se déconnecte, affiche l'information.
 func userout(userName string) {
-	fmt.Println(userName + " nous a quitté.")
+	imprimer(userName + " nous a quitté.")
+	//fmt.Println(userName + " nous a quitté.")
 }
 
 //Fonction eprmettant de décoder le string reçu en TCP et lancer les instructions correspondantes.
