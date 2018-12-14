@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var stop = false
+
 func check(e error) {
 	if e != nil {
 		panic(e)
@@ -19,6 +21,7 @@ func analyseText(text string, conn net.Conn) {
 	if text == "!stop" {
 		_, err := fmt.Fprintf(conn, "TCCHAT_DISCONNECT"+"\n")
 		check(err)
+		stop = true
 	} else {
 		_, err := fmt.Fprintf(conn, "TCCHAT_MESSAGE\t"+text+"\n")
 		check(err)
@@ -71,7 +74,6 @@ func analyseMessage(text string) {
 //Fonction principale du client, qui va tourner en boucle jusqu'à ce que l'utilisateur se déconnecte.
 func clientRun(conn net.Conn) {
 	text := ""
-	stop := false
 	readerConsole := bufio.NewReader(os.Stdin)
 	fmt.Println("Quel est votre pseudo?")
 	name, _ := readerConsole.ReadString('\n')
@@ -98,9 +100,7 @@ func handleConnection(conn net.Conn) {
 
 func setupCon() {
 	conn, err := net.Dial("tcp", "localhost:8080") //Etablissement de la connexion
-	if err != nil {
-		// handle error
-	}
+	check(err)
 	go handleConnection(conn)
 	clientRun(conn)
 }

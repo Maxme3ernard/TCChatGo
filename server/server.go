@@ -29,7 +29,7 @@ func register(nom string, conn net.Conn) {
 			_, err := clients.Write([]byte("TCCHAT_USERIN" + "\t" + connexions[conn] + "\n"))
 			check(err)
 		}
-		//fmt.Println(connexions[conn] + " a rejoint le chat!")
+		fmt.Println(connexions[conn] + " a rejoint le chat!")
 	}
 }
 
@@ -49,10 +49,8 @@ func deconnecter(conn net.Conn) {
 		_, err := clients.Write([]byte("TCCHAT_USEROUT" + "\t" + connexions[conn] + "\n"))
 		check(err)
 	}
-	delete(connexions, conn)
-	err := conn.Close()
-	check(err)
 	fmt.Println(connexions[conn] + " s'est déconnecté")
+	delete(connexions, conn)
 }
 
 //Fonction appelée pour décoder le string reçu par le serveur.
@@ -67,7 +65,7 @@ func analyseMessage(text string, conn net.Conn) {
 			for i := 2; i < len(message); i++ {
 				message[1] += "\t" + message[i]
 			}
-			message[1] = strings.TrimRight(message[1], "\r\t")
+			message[1] = strings.TrimRight(message[1], "\t")
 		}
 
 		envoyerMessage(message[1], conn)
@@ -79,30 +77,30 @@ func analyseMessage(text string, conn net.Conn) {
 //Fonction appelée lorsqu'un nouveau client cherche à se connecter.
 func handleConnection(conn net.Conn) {
 	reader := bufio.NewReader(conn)
-	for /*k := 0; k < 10; k++*/ {
+	for {
 		message, err := reader.ReadString('\n')
-		check(err)
+		if err != nil {
+			err = conn.Close()
+			check(err)
+			break
+		}
 		if message != "" {
 			analyseMessage(message, conn)
 		}
 	}
-	//conn.Write([]byte(message))
 }
 
 func main() {
 	ln, err := net.Listen("tcp", ":8080") //Le serveur écoute en permanence sur le port 8080.
 	fmt.Println(ln)
 	if err != nil {
-		// handle error
+		panic(err)
 	}
 	for {
 		conn, err := ln.Accept() //Lorsqu'une nouvelle connexion est demandée, le serveur l'accepte...
 		if err != nil {
-			// handle error
+			panic(err)
 		}
 		go handleConnection(conn) //... et lance un thread qui va s'occuper de cette connexion, tout en écoutant le port 8080 pour d'autres connexions.
 	}
-
-	/*f, err := os.Open("bonjour.txt")
-	check(err)*/
 }
