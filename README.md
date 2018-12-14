@@ -5,10 +5,10 @@ A faire:
 * [x] Décodage du texte reçu par le serveur, gestion des différents cas.
 * [x] Dans le cas TCCHAT_MESSAGE, faire en sorte que le MESSAGE_PAYLOAD puisse contenir des \t (pas encore implémenté)
 * [x] Récupérer le texte à partir d'une connexion et non d'un fichier texte.
-* [ ] Gérer les erreurs dans les messages reçus par le serveur.
-* [ ] Réussir à récupérer le nom d'utilisateur lors de la réception d'un message pour l'afficher devant le message lors de l'envoie à tous les clients ("UTILISATEUR DIT: .....")
-* [ ] Gérer le cas ou un même client se register une deuxième fois: terminer la connexion.
-* [ ] Faire un client utilisable depuis la console
+* [x] Réussir à récupérer le nom d'utilisateur lors de la réception d'un message pour l'afficher devant le message lors de l'envoie à tous les clients ("UTILISATEUR DIT: .....")
+* [x] Gérer le cas ou un même client se register une deuxième fois: terminer la connexion.
+* [x] Faire un client utilisable depuis la console
+* [ ] Gérer les erreurs.
 * [ ] Faire une IHM pour le client
 
 
@@ -18,7 +18,7 @@ A faire:
 
 ## Project Planning :
 ### Rush 2 :
-* [ ] Create TC chat server application 
-* [ ] Client Application
-* [ ] Multiple clients ?
+* [x] Create TC chat server application 
+* [x] Client Application
+* [x] Multiple clients ?
 * [x] Read and write data on TCP socket ? (single client) 
