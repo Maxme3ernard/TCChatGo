@@ -15,6 +15,7 @@ func check(e error) {
 }
 
 func analyseText(text string, conn net.Conn) {
+	text = strings.TrimRight(text, "\r\n")
 	if text == "!stop" {
 		_, err := fmt.Fprintf(conn, "TCCHAT_DISCONNECT"+"\n")
 		check(err)
