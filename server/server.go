@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -20,6 +21,10 @@ func check(e error) {
 
 //Fonction appelée lors de l'arrivée d'un client sur le chat.
 func register(nom string, conn net.Conn) {
+	nbTaken := alreadyTaken(nom)
+	if nbTaken > 0 {
+		nom = nom + "_" + strconv.Itoa(nbTaken+1)
+	}
 	_, ok := connexions[conn]
 	if ok {
 		deconnecter(conn)
@@ -35,6 +40,17 @@ func register(nom string, conn net.Conn) {
 	}
 }
 
+func alreadyTaken(nom string) int {
+	nbAlreadyIn := 0
+	for _, v := range connexions {
+		fmt.Println(v)
+		if v == nom {
+			nbAlreadyIn += 1
+		}
+	}
+	return nbAlreadyIn
+}
+
 //Fonction appelée lorsqu'un client envoie un message sur le chat.
 func envoyerMessage(MessagePayload string, conn net.Conn) {
 	MessagePayload = strings.TrimRight(MessagePayload, "\r\n")
@@ -47,12 +63,13 @@ func envoyerMessage(MessagePayload string, conn net.Conn) {
 
 //Fonction appelée quand un client se déconnecte du chat.
 func deconnecter(conn net.Conn) {
+	nom := connexions[conn]
+	delete(connexions, conn)
 	for clients := range connexions {
-		_, err := clients.Write([]byte("TCCHAT_USEROUT" + "\t" + connexions[conn] + "\n"))
+		_, err := clients.Write([]byte("TCCHAT_USEROUT" + "\t" + nom + "\n"))
 		check(err)
 	}
-	fmt.Println(connexions[conn] + " s'est déconnecté")
-	delete(connexions, conn)
+	fmt.Println(nom + " s'est déconnecté")
 }
 
 //Fonction appelée pour décoder le string reçu par le serveur.
@@ -81,8 +98,7 @@ func handleConnection(conn net.Conn) {
 	for {
 		message, err := reader.ReadString('\n')
 		if err != nil {
-			err = conn.Close()
-			check(err)
+			deconnecter(conn)
 			break
 		}
 		if message != "" {

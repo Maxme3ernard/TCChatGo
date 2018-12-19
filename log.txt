@@ -1,3 +1,2 @@
 Bienvenue sur Chat TC du groupe 3.
-Maxime a rejoint le chat. Bienvenue à lui!
-Maxime: TCCHAT_DISCONNECT
+Dim a rejoint le chat. Bienvenue à lui!
