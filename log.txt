@@ -1,4 +1,3 @@
-TCCHAT_WELCOME	Le chat de TC
-TCCHAT_USERIN	Tobby
-TCCHAT_BCAST	Tobby	Salut les zamis!
-TCCHAT_USEROUT	Tobby
+Bienvenue sur Chat TC du groupe 3.
+Maxime a rejoint le chat. Bienvenue à lui!
+Maxime: TCCHAT_DISCONNECT

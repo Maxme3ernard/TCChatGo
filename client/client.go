@@ -9,7 +9,7 @@ import (
 )
 
 var stop = false
-var f, _ = os.Open("log.txt")
+var f, _ = os.Create("log.txt")
 var logs = bufio.NewWriter(f)
 
 func check(e error) {
@@ -19,7 +19,9 @@ func check(e error) {
 }
 
 func imprimer(text string) {
-	logs.WriteString(text + "\n")
+	_, e := logs.WriteString(text + "\r\n")
+	logs.Flush()
+	check(e)
 }
 
 func analyseText(text string, conn net.Conn) {
