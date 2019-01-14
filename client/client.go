@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+var ADDRESS = "192.168.43.254:8080"
 var stop = false
 var f, _ = os.Create("log.txt")
 var logs = bufio.NewWriter(f)
@@ -111,7 +112,7 @@ func handleConnection(conn net.Conn) {
 }
 
 func setupCon() {
-	conn, err := net.Dial("tcp", "localhost:8080") //Etablissement de la connexion
+	conn, err := net.Dial("tcp", ADDRESS) //Etablissement de la connexion
 	check(err)
 	go handleConnection(conn)
 	clientRun(conn)

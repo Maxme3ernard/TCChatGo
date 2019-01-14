@@ -10,7 +10,7 @@ import (
 )
 
 var connexions = make(map[net.Conn]string)
-var NomServeur = "Chat TC du groupe 3"
+var SERVERNAME = "Chat TC du groupe 3"
 var mux = sync.Mutex{}
 
 func check(e error) {
@@ -30,7 +30,7 @@ func register(nom string, conn net.Conn) {
 		deconnecter(conn)
 	} else {
 		connexions[conn] = nom
-		_, err := conn.Write([]byte("TCCHAT_WELCOME" + "\t" + NomServeur + "\n"))
+		_, err := conn.Write([]byte("TCCHAT_WELCOME" + "\t" + SERVERNAME + "\n"))
 		check(err)
 		for clients := range connexions {
 			_, err := clients.Write([]byte("TCCHAT_USERIN" + "\t" + connexions[conn] + "\n"))
@@ -43,7 +43,6 @@ func register(nom string, conn net.Conn) {
 func alreadyTaken(nom string) int {
 	nbAlreadyIn := 0
 	for _, v := range connexions {
-		fmt.Println(v)
 		if v == nom {
 			nbAlreadyIn += 1
 		}
@@ -88,7 +87,7 @@ func analyseMessage(text string, conn net.Conn) {
 		}
 		envoyerMessage(message[1], conn)
 	case "TCCHAT_DISCONNECT":
-		deconnecter(conn)
+		//deconnecter(conn)
 	}
 }
 
